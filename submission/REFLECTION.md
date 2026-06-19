@@ -1,22 +1,20 @@
-# Reflection — Day 17 (≤ 200 words)
+# Reflection - Day 17
 
-Answer briefly, in your own words. This is graded on reasoning, not length.
+The quietest failure would be trace-to-Bronze flattening. If parent/child spans,
+outcomes, or prompt metadata are lost, the pipeline still runs but the eval set
+and DPO pairs become misleading. I would detect it with row-count checks per
+trace, required `gen_ai.*` fields, and sample audits against raw traces.
 
-1. **The flywheel.** Day 13 emitted agent traces; today you turned them into an
-   eval set and DPO pairs that Day 22 will train on. Which step in
-   `traces → Bronze → datasets` would break most silently in production if you
-   got it wrong — and how would you detect it?
+Skipping decontamination would train on prompts also used for evaluation. The
+model could look better because it memorized the benchmark, not because it
+generalized. Metrics would show suspiciously high eval scores, especially on
+seen prompts, while new production prompts would not improve as much.
 
-2. **Decontamination.** Your run dropped 2 of 3 preference pairs because their
-   prompts were in the eval set. What concretely goes wrong if you *skip* this
-   step and train on those pairs? How would the lie show up in your metrics?
+A dangerous feature is a user's lifetime spend or number of support tickets. If
+I predict churn on June 1, I must not join values updated after June 1. An ASOF
+join keeps only facts known at prediction time.
 
-3. **Point-in-time.** The naive join leaked a future `lifetime_spend` into the
-   training row. Describe one feature in a system you know that would be
-   dangerous to join without an `ASOF`/point-in-time guard.
-
-4. **Graph vs vector.** From `kg_demo.py`, name one question the knowledge graph
-   answers well that flat chunk retrieval (`embed.py`) would struggle with, and
-   one where the graph is overkill.
-
-_Write your answers below._
+The graph answers the multi-hop question "Where does a widget ship from?" well:
+widget -> accessory -> Hanoi. Flat chunk retrieval struggles because the two
+facts are split across chunks. For a simple question like "What is returnable?",
+the graph is overkill; direct retrieval from the returns policy is enough.
